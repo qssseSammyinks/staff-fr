@@ -1,13 +1,18 @@
 <?php
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
-$dotenv->load();
+// Carrega .env somente se existir (local)
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
+}
 
 session_start();
 
-data_default_timezome_set('America/Sao_Paulo');
+// Ajusta timezone
+date_default_timezone_set('America/Sao_Paulo');
 
-define('MONGO_URI', $_ENV['MONGO_URI']);
-define('MONGO_DB', $_ENV['MONGO_DB']);
+// Define constantes do Mongo e uploads
+define('MONGO_URI', $_ENV['MONGO_URI'] ?? 'mongodb://localhost:27017');
+define('MONGO_DB', $_ENV['MONGO_DB'] ?? 'staffdb');
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
