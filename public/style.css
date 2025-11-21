@@ -1,0 +1,7 @@
+body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+input, textarea { display:block; margin:10px 0; width:300px; padding:5px; }
+button { padding:5px 10px; cursor:pointer; }
+table { border-collapse: collapse; width: 100%; margin-top:20px; background: #fff; }
+th, td { border:1px solid #333; padding:5px; text-align:left; }
+a { text-decoration: none; color: blue; }
+p { background: #cfffcf; padding:5px; }
