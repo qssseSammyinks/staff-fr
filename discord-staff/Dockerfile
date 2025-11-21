@@ -1,29 +1,34 @@
 FROM php:8.3-apache
 
-RUN a2enmod rewrite
-
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
     libssl-dev \
     pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+    libcurl4-openssl-dev \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-install zip
 
-# Instalar extensões
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+# Enable Apache rewrite
+RUN a2enmod rewrite
 
-# Instalar Composer
+# Enable composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working dir
 WORKDIR /var/www/html
 
-COPY . .
+# Copy project
+COPY . /var/www/html
 
-RUN composer install --no-interaction --prefer-dist
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Porta obrigatória da Render (usa env PORT)
-ENV PORT=10000
-EXPOSE 10000
+# Permissions
+RUN chown -R www-data:www-data /var/www/html
 
+# Expose port
+EXPOSE 80
+
+# Start Apache
 CMD ["apache2-foreground"]
