@@ -1,51 +1,55 @@
 <?php
-require_once 'config.php';
-if(!isset($_SESSION['admin_logged'])){
-    header("Location: login.php");
+require_once '../src/config.php';
+require_once '../src/auth.php';
+require_once '../src/discord.php';
+
+if (isStaff()) {
+    header('Location: login.php');
     exit;
 }
 
-// Aprovar candidato
-if(isset($_GET['approve'])){
-    $collection->updateOne(
-        ['_id' => new MongoDB\BSON\ObjectId($_GET['approve'])],
-        ['$set' => ['status'=>'aprovado']]
-    );
-    header("Location: dashboard.php");
+// Approve/Reject via GET
+if (isset($_GET['action']) && isset ($_GET['id'])) {
+    $id = new MongoDB\BSON\ObjectId($_GET['id']);
+    $status = $_GET['action'] === 'approve' ? 'approved' : 'reject';
+    $collection->updateOne(['_id' => $id], ['$set' => ['status' => $status]]);
+    sendDiscordWebhook ("Forms $status");
+    header('Location: dashboard.php');
     exit;
 }
 
-// Buscar candidaturas
-$applications = $collection->find([], ['sort'=>['created_at'=>-1]]);
+$applications = $collection->find([], ['sort' => ['created_at' => -1]]);
 ?>
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard Admin</title>
-    <link rel="stylesheet" href="style.css">
+ <meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Dashboard Admin</h1>
+<h1>Admin Dashboard</h1>
 <a href="logout.php">Logout</a>
-<table border="1">
-<tr>
-    <th>Nome</th><th>Discord</th><th>Idade</th><th>Motivo</th><th>Status</th><th>Ações</th>
-</tr>
-<?php foreach($applications as $a): ?>
-<tr>
-    <td><?= htmlspecialchars($a['nome']) ?></td>
-    <td><?= htmlspecialchars($a['discord']) ?></td>
-    <td><?= htmlspecialchars($a['idade']) ?></td>
-    <td><?= htmlspecialchars($a['motivo']) ?></td>
-    <td><?= htmlspecialchars($a['status']) ?></td>
-    <td>
-        <?php if($a['status']=='pendente'): ?>
-        <a href="?approve=<?= $a['_id'] ?>">Aprovar</a>
-        <?php endif; ?>
-    </td>
-</tr>
-<?php endforeach; ?>
+<table>
+    <tr>
+        <th>Discord</th>
+        <th>Experience</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    <?php foreach ($applications as $app): ?>
+    <tr>
+        <td><?= $app['discord'] ?></td>
+        <td><?= $app['experience'] ?></td>
+        <td><?= $app['status']?></td>
+        <td>
+            <a href="update.php?id=<?= $app['id'] ?>&actio=approve">Approve</a>
+            <a href="update.php?id=<?= $app['id'] ?>&actio=reject">Reject</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
 </table>
 </body>
 </html>
