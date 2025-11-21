@@ -1,8 +1,0 @@
-{
-    "name": "staff-fr/project",
-    "description": "Discord staff form",
-    "require": {
-        "mongodb/mongodb": "^2.1",
-        "vlucas/phpdotenv": "^5.6"
-    }
-}

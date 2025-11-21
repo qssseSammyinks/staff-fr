@@ -1,0 +1,12 @@
+body{font-family:Arial,sans-serif;padding:20px;}
+input,textarea{display:block;margin:10px 0;width:300px;}
+button{padding:5px 15px;cursor:pointer;}
+table{border-collapse:collapse;margin-top:20px;width:100%;}
+th,td{padding:10px;text-align:left;}
+a{text-decoration:none;color:blue;}
+a:hover{text-decoration:underline;}
+.success{color:green;}
+.error{color:red;}
+.pending{background-color:#fff8b3;}
+.approved{background-color:#b3ffb3;}
+.rejected{background-color:#ffb3b3;}
