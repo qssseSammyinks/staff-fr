@@ -6,10 +6,8 @@ $dotenv->load();
 
 session_start();
 
-try {
-    $client = new MongoDB\Client($_ENV['MONGO_URI']);
-    $db = $client->{$_ENV['MONGO_DB']};
-    $collection = $db->{$_ENV['MONGO_COLLECTION']};
-} catch (Exception $e) {
-    die("Erro ao conectar no MongoDB: ".$e->getMessage());
-}
+data_default_timezome_set('America/Sao_Paulo');
+
+define('MONGO_URI', $_ENV['MONGO_URI']);
+define('MONGO_DB', $_ENV['MONGO_DB']);
+define('UPLOAD_DIR', __DIR__ . '/../uploads/');
